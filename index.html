@@ -2,9 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disabled Button Animation</title>
+    <style>
+        .movearea {
+            transition: 0.3s background-color ease;
+        }
+
+        .shake {
+            animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+            transform: translate3d(0, 0, 0);
+        }
+
+        @keyframes shake {
+            10%, 90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%, 80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%, 50%, 70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%, 60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+    </style>
 </head>
 <body>
+
+<div
+        @mousemove="onMousemove"
+        :style="{ backgroundColor: `hsl(${x}, 80%, 50%)` }"
+        class="movearea"
+>
+    <p>Move your mouse across this div...</p>
+    <p>x: {{ x }}</p>
+</div>
+
+<div id="app" :class="{ shake: disabled }">
+    <button @click="warnDisabled">Click me</button>
+    <span v-if="disabled">This feature is disabled!</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script>
+    const app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                x: 0,
+                disabled: false
+            }
+        },
+        methods: {
+            onMousemove(e) {
+                this.x = e.clientX;
+            },
+            warnDisabled() {
+                this.disabled = true;
+                setTimeout(() => {
+                    this.disabled = false;
+                }, 1500);
+            }
+        },
+        mounted() {
+            document.getElementById('moveArea').addEventListener('mousemove', this.onMousemove);
+        },
+        beforeDestroy() {
+            document.getElementById('moveArea').removeEventListener('mousemove', this.onMousemove);
+        }
+    });
+</script>
 
 </body>
 </html>
